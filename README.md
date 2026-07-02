@@ -1,6 +1,6 @@
 # RVR - Cooldown Cleanup
 
-RVR - Cooldown Cleanup adds utility buttons to Blizzard's Cooldown Viewer settings panel for quickly moving entire Cooldown Manager sections out of active display bars.
+Adds utility buttons to Blizzard's Cooldown Viewer settings panel for quickly moving entire Cooldown Manager sections out of active display bars.
 
 ## What It Does
 
@@ -19,7 +19,7 @@ The addon does not automatically save the Cooldown Viewer layout. After using a 
 
 World of Warcraft 12.0.5 marks several Cooldown Viewer values as secret and untainted-sensitive. Addon-side category changes can leave Blizzard's Cooldown Viewer execution path tainted until the UI is reloaded, which may later produce errors when Blizzard refreshes spell, aura, or totem cooldown data.
 
-For that reason, after the addon successfully moves one or more items, it shows a reload prompt. Reloading immediately after the cleanup applies the change cleanly and avoids leaving the tainted state active during normal gameplay.
+For that reason, after the addon successfully moves one or more items, it shows a reload prompt. Reloading immediately after the cleanup applies the change cleanly and avoids leaving the tainted state active during normal gameplay. Or cancel and reload when done editing and saving the CDM.
 
 ## Combat Behavior
 
@@ -27,4 +27,4 @@ The cleanup buttons are hidden and disabled while in combat. If a cleanup is att
 
 ## Notes
 
-This addon intentionally does one narrow job: bulk-clearing Blizzard Cooldown Viewer categories. It does not replace Blizzard's settings UI, does not automatically save layouts, and does not modify M33kAuras or WeakAuras.
+This addon intentionally does one narrow job: bulk-clearing Blizzard Cooldown Viewer categories. It does not replace Blizzard's settings UI, and does not automatically save layouts.
