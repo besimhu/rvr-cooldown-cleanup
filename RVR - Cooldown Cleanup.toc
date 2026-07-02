@@ -1,0 +1,5 @@
+## Interface: 120005, 120007
+## Title: RVR - Cooldown Cleanup
+## Notes: Adds buttons to clear Blizzard Cooldown Manager Essential and Utility bars.
+## LoadOnDemand: 0
+core.lua
