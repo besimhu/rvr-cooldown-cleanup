@@ -17,19 +17,6 @@ local function Print(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cff82c5ff" .. ADDON_NAME .. ":|r " .. tostring(message))
 end
 
-StaticPopupDialogs.RVR_COOLDOWN_CLEANUP_RELOAD = {
-    text = "%s",
-    button1 = RELOADUI or "Reload",
-    button2 = CANCEL,
-    OnAccept = function()
-        ReloadUI()
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1,
-    preferredIndex = 3,
-}
-
 local function GetSettingsFrame()
     return _G.CooldownViewerSettings
 end
@@ -83,6 +70,35 @@ local function RefreshSettings()
     end
 end
 
+local function SaveCurrentLayout()
+    local settings = GetSettingsFrame()
+    if not settings then return false end
+
+    if settings.SaveCurrentLayout then
+        settings:SaveCurrentLayout()
+        return true
+    elseif settings.CheckSaveCurrentLayout then
+        settings:CheckSaveCurrentLayout()
+        return true
+    end
+
+    return false
+end
+
+StaticPopupDialogs.RVR_COOLDOWN_CLEANUP_RELOAD = {
+    text = "%s",
+    button1 = RELOADUI or "Reload",
+    button2 = "Later",
+    OnAccept = function()
+        SaveCurrentLayout()
+        ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1,
+    preferredIndex = 3,
+}
+
 local function ClearCategory(category)
     if InCombatLockdown and InCombatLockdown() then
         Print("Leave combat before clearing cooldowns.")
@@ -120,7 +136,7 @@ local function ClearCategory(category)
     Print(("Cleared %d %s from %s."):format(moved, noun, categoryTitle))
 
     if moved > 0 then
-        local message = ("RVR - Cooldown Cleanup\n%d %s cleaned from %s.\nReload is needed because Blizzard's Cooldown Viewer can taint after addon-side category changes."):format(moved, noun, categoryTitle)
+        local message = ("RVR - Cooldown Cleanup\n\n%d %s cleaned from %s.\n\nReloading the UI via the reload button will save the Cooldown layout. A reload is necessary to avoid UI taint behavior."):format(moved, noun, categoryTitle)
         StaticPopup_Show("RVR_COOLDOWN_CLEANUP_RELOAD", message)
     end
 end
