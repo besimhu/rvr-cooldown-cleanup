@@ -37,11 +37,16 @@ local function GetCategoryTitle(category)
 end
 
 local function GetHiddenCategoryFor(category)
+    -- 12.1 replaced HiddenSpell/HiddenAura with settings-only
+    -- HiddenActive/HiddenPassive categories. Prefer the new names while
+    -- retaining compatibility with 12.0.x.
     if category == Enum.CooldownViewerCategory.TrackedBuff or category == Enum.CooldownViewerCategory.TrackedBar then
-        return GetCategoryObject(Enum.CooldownViewerCategory.HiddenAura)
+        local hiddenPassive = Enum.CooldownViewerCategory.HiddenPassive or Enum.CooldownViewerCategory.HiddenAura
+        return hiddenPassive and GetCategoryObject(hiddenPassive)
     end
 
-    return GetCategoryObject(Enum.CooldownViewerCategory.HiddenSpell)
+    local hiddenActive = Enum.CooldownViewerCategory.HiddenActive or Enum.CooldownViewerCategory.HiddenSpell
+    return hiddenActive and GetCategoryObject(hiddenActive)
 end
 
 local function GetCooldownIDsForCategory(category)
