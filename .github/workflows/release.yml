@@ -62,5 +62,5 @@ jobs:
           gh release create "$RELEASE_TAG" \
             "release/RVR-Cooldown-Cleanup-${RELEASE_VERSION}.zip" \
             --target "$(git rev-parse HEAD)" \
-            --title "RVR - Cooldown Cleanup ${RELEASE_VERSION}" \
+            --title "rvr-cooldown-cleanup-${RELEASE_VERSION}" \
             --generate-notes
