@@ -1,0 +1,66 @@
+name: Release addon
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Choose release version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TZ: America/New_York
+        run: |
+          base="v$(date +%Y.%m.%d)"
+          tag="$base"
+          revision=2
+          while gh release view "$tag" >/dev/null 2>&1; do
+            tag="${base}.${revision}"
+            revision=$((revision + 1))
+          done
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Update addon version on main
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          sed -i "s/^## Version:.*/## Version: ${RELEASE_VERSION}/" "RVR - Cooldown Cleanup.toc"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "RVR - Cooldown Cleanup.toc"
+          if ! git diff --cached --quiet; then
+            git commit -m "Release ${RELEASE_VERSION}"
+            git push origin HEAD:main
+          fi
+
+      - name: Package addon
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          addon_dir="release/RVR - Cooldown Cleanup"
+          mkdir -p "$addon_dir"
+          cp core.lua "RVR - Cooldown Cleanup.toc" README.md "$addon_dir/"
+          cd release
+          zip -qr "RVR-Cooldown-Cleanup-${RELEASE_VERSION}.zip" "RVR - Cooldown Cleanup"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            "release/RVR-Cooldown-Cleanup-${RELEASE_VERSION}.zip" \
+            --target "$(git rev-parse HEAD)" \
+            --title "RVR - Cooldown Cleanup ${RELEASE_VERSION}" \
+            --generate-notes
